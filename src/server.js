@@ -16,7 +16,7 @@ const { getUsers, registerUser, loginUser } = require('./modules/User')
 app.get('/', (request, response) => {
   response.json({ info: 'Node.js, Express, and Postgres API' })
 })
-app.get('/users',getUsers);
+app.get('/users', [auth.verifyToken], getUsers);
 app.post('/register', [auth.basicValidation], registerUser);
 app.post('/login', [auth.basicValidation], loginUser);
 
