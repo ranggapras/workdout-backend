@@ -1,7 +1,7 @@
 const express = require('express')
 const cors = require('cors')
-const auth = require('./config/auth');
 
+const router = express.Router();
 const app = express()
 
 app.use(cors())
@@ -11,14 +11,10 @@ app.use(
     extended: true,
   })
 )
-const { getUsers, registerUser, loginUser } = require('./modules/User')
 
-app.get('/', (request, response) => {
-  response.json({ info: 'Node.js, Express, and Postgres API' })
-})
-app.get('/users', [auth.verifyToken], getUsers);
-app.post('/register', [auth.basicValidation], registerUser);
-app.post('/login', [auth.basicValidation], loginUser);
+require('./routes/User')(router);
+require('./routes/Trainer')(router);
+app.use('/api', router);
 
 const PORT = 3000;
 app.listen(PORT, () => {

@@ -1,10 +1,10 @@
-const pool = require('../config/dbconnect');
-const { BASIC_TOKEN } = require('../config/auth');
+const pool = require('../configs/dbconnect');
+const { BASIC_TOKEN } = require('../configs/auth');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const getUsers = (request, response) => {
-  pool.query('SELECT * FROM public."User"', (error, results) => {
+  pool.query('SELECT * FROM public."view_member"', (error, results) => {
     if (error) {
       return response.status(500).send({
         code: 500,
@@ -20,13 +20,61 @@ const getUsers = (request, response) => {
   })
 }
 
+const getUser = (request, response) => {
+  const { idUser } = request.params;
+  pool.query(`SELECT * FROM public."view_member" WHERE public."view_member"."idUser" = '${idUser}'`, (error, results) => {
+    if (error) {
+      return response.status(500).send({
+        code: 500,
+        message: "Failed!"
+      });
+    }
+    const result = {
+      data: results.rows[0],
+      code: 200,
+      message: 'success'
+    }
+    return response.status(200).json(result)
+  })
+}
+
 const registerUser = (request, response) => {
-  const { nameUser, password, email, phoneNumber } = request.body;
+  const { nameUser, password, email, phoneNumber, gender, dob, address } = request.body;
   pool.query(`INSERT INTO public."User" ("nameUser", "password", "phoneNumber", "email") VALUES
-    ('${nameUser}', '${bcrypt.hashSync(password, 8)}', '${phoneNumber}', '${email}')`, (error, results) => {
+    ('${nameUser}', '${bcrypt.hashSync(password, 8)}', '${phoneNumber}', '${email}')  RETURNING "idUser"`, (error, results) => {
+      pool.query(`INSERT INTO public."Customer" ("idUser" ,"gender", "dob", "address") VALUES
+    ('${results.rows[0].idUser}', '${gender}', '${dob}', '${address}')  RETURNING "idUser"`, (error, results) => {
+      const result = {
+        data: results.rows[0],
+        code: 201,
+        message: 'success'
+      }
+      return response.status(200).json(result)
+    })
+  })
+}
+
+const updateUser = (request, response) => {
+  const { idUser } = request.params;
+  const { nameUser, photo, email, phoneNumber } = request.body;
+  pool.query(`UPDATE public."User" SET "nameUser" = '${nameUser}', "photo = '${photo}', "phoneNumber" = '${phoneNumber}',
+     "email" = '${email}' WHERE "idUser" = '${idUser}'`, (error, results) => {
       const result = {
         data: {},
-        code: 200,
+        code: 201,
+        message: 'success'
+      }
+      return response.status(200).json(result)
+  })
+}
+
+const updatePassword = (request, response) => {
+  const { nameUser, photo, email, phoneNumber } = request.body;
+  pool.query(`UPDATE public."User" SET "nameUser" = '${nameUser}', "photo = '${photo}', "phoneNumber" = '${phoneNumber}',
+     "email" = '${email}'`, (error, results) => {
+      const result = {
+        data: {},
+        code: 201,
         message: 'success'
       }
       return response.status(200).json(result)
@@ -69,6 +117,8 @@ const loginUser = (request, response) => {
 
 module.exports = {
   getUsers,
+  getUser,
   registerUser,
+  updateUser,
   loginUser,
 }
