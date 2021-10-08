@@ -15,6 +15,9 @@ app.use(
 require('./routes/User')(router);
 require('./routes/Trainer')(router);
 require('./routes/Workout')(router);
+require('./routes/Activity')(router);
+require('./routes/Promo')(router);
+require('./routes/Notification')(router);
 app.use('/api', router);
 
 const PORT = 3000;

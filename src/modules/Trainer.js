@@ -40,8 +40,8 @@ const getTrainer = (request, response) => {
 
 const addTrainer = (request, response) => {
   const { nameUser, password, email, phoneNumber, gender, dob, address } = request.body;
-  pool.query(`INSERT INTO public."User" ("nameUser", "password", "phoneNumber", "email") VALUES
-    ('${nameUser}', '${bcrypt.hashSync(password, 8)}', '${phoneNumber}', '${email}')  RETURNING "idUser"`, (error, results) => {
+  pool.query(`INSERT INTO public."User" ("nameUser", "password", "phoneNumber", "email","role") VALUES
+    ('${nameUser}', '${bcrypt.hashSync(password, 8)}', '${phoneNumber}', '${email}, '2')  RETURNING "idUser"`, (error, results) => {
       pool.query(`INSERT INTO public."Trainer" ("idUser" ) VALUES ('${results.rows[0].idUser}')  RETURNING "idUser"`, (error, results) => {
       const result = {
         data: results.rows[0],
