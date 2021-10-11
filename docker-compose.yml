@@ -1,0 +1,45 @@
+version: "3"
+services:
+  gym-backend:
+    container_name: gym-backend
+    build:
+      context: .
+      dockerfile: .Dockerfile
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres://postgres:workdout@postgres:5432/workdout
+      NODE_ENV: development
+      PORT: 3000
+    ports:
+      - "3000:3000"
+  postgres:
+    container_name: postgres
+    image: postgres:10.4
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgresdata:/var/lib/postgresql/data
+      - ./src/migrations/dbinit.sql:/docker-entrypoint-initdb.d/dbinit.sql
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: workdout
+      POSTGRES_DB: workdout
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:4.18
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@workdout.com
+      PGADMIN_DEFAULT_PASSWORD: workdout
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - "8080:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+volumes:
+    db-data:
+    pgadmin-data:
