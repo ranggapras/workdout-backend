@@ -18,6 +18,8 @@ require('./routes/Workout')(router);
 require('./routes/Activity')(router);
 require('./routes/Promo')(router);
 require('./routes/Notification')(router);
+require('./routes/Schedule')(router);
+require('./routes/TransactionSchedule')(router);
 app.use('/api', router);
 
 const PORT = 3000;

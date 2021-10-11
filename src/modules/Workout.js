@@ -57,7 +57,7 @@ const addWorkout = (request, response) => {
 const updateWorkout = (request, response) => {
   const { idWorkout } = request.params;
   const { name,time,description } = request.body;
-  pool.query(`UPDATE public."Workout" SET "name" = '${name}', "time" = '${time}', "description" = '${description}' 
+  pool.query(`UPDATE public."Workout" SET "name" = '${name}', "time" = '${time}', "description" = '${description}'
   WHERE "idWorkout"='${idWorkout}'`, (error, results) => {
     if (error) {
       return response.status(500).send({

@@ -44,6 +44,12 @@ const registerUser = (request, response) => {
     ('${nameUser}', '${bcrypt.hashSync(password, 8)}', '${phoneNumber}', '${email}')  RETURNING "idUser"`, (error, results) => {
       pool.query(`INSERT INTO public."Customer" ("idUser" ,"gender", "dob", "address") VALUES
     ('${results.rows[0].idUser}', '${gender}', '${dob}', '${address}')  RETURNING "idUser"`, (error, results) => {
+      if (error) {
+        return response.status(500).send({
+          code: 500,
+          message: "Failed!"
+        });
+      }
       const result = {
         data: results.rows[0],
         code: 201,
@@ -51,6 +57,12 @@ const registerUser = (request, response) => {
       }
       return response.status(200).json(result)
     })
+    if (error) {
+      return response.status(500).send({
+        code: 500,
+        message: "Failed!"
+      });
+    }
   })
 }
 
@@ -59,6 +71,12 @@ const updateUser = (request, response) => {
   const { nameUser, photo, email, phoneNumber } = request.body;
   pool.query(`UPDATE public."User" SET "nameUser" = '${nameUser}', "photo = '${photo}', "phoneNumber" = '${phoneNumber}',
      "email" = '${email}' WHERE "idUser" = '${idUser}'`, (error, results) => {
+      if (error) {
+        return response.status(500).send({
+          code: 500,
+          message: "Failed!"
+        });
+      }
       const result = {
         data: {},
         code: 201,
@@ -69,15 +87,57 @@ const updateUser = (request, response) => {
 }
 
 const updatePassword = (request, response) => {
-  const { nameUser, photo, email, phoneNumber } = request.body;
-  pool.query(`UPDATE public."User" SET "nameUser" = '${nameUser}', "photo = '${photo}', "phoneNumber" = '${phoneNumber}',
-     "email" = '${email}'`, (error, results) => {
-      const result = {
-        data: {},
-        code: 201,
-        message: 'success'
+  const { password, newPassword, repeatPassword } = request.body;
+  pool.query(`SELECT * FROM public."User" WHERE "idUser" = '${request.idUser}'`, (error, results) => {
+    if (error) {
+      console.log(error);
+      return response.status(500).send({
+        code: 500,
+        message: "Failed!"
+      });
+    }
+    if(results.rows.length > 0){
+      const passwordIsValid = bcrypt.compareSync(
+        password,
+        results.rows[0].password
+      );
+      if (!passwordIsValid) {
+        return response.status(401).send({
+          accessToken: null,
+          code: 401,
+          message: "Password Salah"
+        });
+      } else {
+        if(newPassword !== repeatPassword) {
+          if (error) {
+            return response.status(400).send({
+              code: 400,
+              message: "Password baru tidak sama!"
+            });
+          }
+        }
+        pool.query(`UPDATE public."User" SET "password" = '${bcrypt.hashSync(newPassword, 8)}' WHERE "idUser" = '${request.idUser}'`, (error, results) => {
+          if (error) {
+            return response.status(500).send({
+              code: 500,
+              message: "Failed!"
+            });
+          }
+          const result = {
+            data: {},
+            code: 201,
+            message: 'success'
+          }
+          return response.status(200).json(result)
+      })
       }
-      return response.status(200).json(result)
+    } else {
+      return response.status(401).send({
+        accessToken: null,
+        code: 400,
+        message: "Password Salah"
+      });
+    }
   })
 }
 
@@ -120,5 +180,6 @@ module.exports = {
   getUser,
   registerUser,
   updateUser,
+  updatePassword,
   loginUser,
 }
