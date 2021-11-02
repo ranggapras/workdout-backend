@@ -69,9 +69,10 @@ const registerUser = (request, response) => {
 const updateUser = (request, response) => {
   const { idUser } = request.params;
   const { nameUser, photo, email, phoneNumber } = request.body;
-  pool.query(`UPDATE public."User" SET "nameUser" = '${nameUser}', "photo = '${photo}', "phoneNumber" = '${phoneNumber}',
+  pool.query(`UPDATE public."User" SET "nameUser" = '${nameUser}', "photo" = '${photo}', "phoneNumber" = '${phoneNumber}',
      "email" = '${email}' WHERE "idUser" = '${idUser}'`, (error, results) => {
       if (error) {
+        console.log(error);
         return response.status(500).send({
           code: 500,
           message: "Failed!"
