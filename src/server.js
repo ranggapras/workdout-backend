@@ -4,7 +4,9 @@ const cors = require('cors')
 const router = express.Router();
 const app = express()
 
-app.use(cors())
+app.use(cors(
+  {origin:'*'}
+))
 app.use(express.json())
 app.use(
   express.urlencoded({
@@ -12,14 +14,14 @@ app.use(
   })
 )
 
-require('./routes/User')(router);
-require('./routes/Trainer')(router);
-require('./routes/Workout')(router);
-require('./routes/Activity')(router);
-require('./routes/Promo')(router);
-require('./routes/Notification')(router);
-require('./routes/Schedule')(router);
-require('./routes/TransactionSchedule')(router);
+require('./routes/User')(router); //data master untuk user (admin,customer,personal trainer)
+require('./routes/Trainer')(router);//data personal trainer
+require('./routes/Workout')(router);//workout dengan personal trainer
+require('./routes/Activity')(router);//untuk kalkulator aktivitas harian
+require('./routes/Promo')(router);//diskon
+require('./routes/Notification')(router);//notifikasi
+require('./routes/Schedule')(router)//jadwal workout untuk workout planner
+require('./routes/TransactionSchedule')(router);//jadwal workout
 app.use('/api', router);
 
 const PORT = 3000;
