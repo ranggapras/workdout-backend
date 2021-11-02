@@ -70,6 +70,24 @@ const getTransaction = (request, response) => {
   })
 }
 
+const getMemberBySchedule = (request, response) => {
+  const { idTrainer } = request.params;
+  pool.query(`SELECT * FROM public."view_pt_member" WHERE "idTrainer" = '${idTrainer}'`, (error, resultsSchedule) => {
+      if (error) {
+        return response.status(500).send({
+          code: 500,
+          message: "Failed!"
+        });
+      }
+    const result = {
+      data: resultsSchedule.rows,
+      code: 200,
+      message: 'success'
+    }
+    return response.status(200).json(result)
+  })
+}
+
 const addTransaction = (request, response) => {
   const { idSchedule, amount = 40000, description, idPromo = '', idUser } = request.body;
   pool.query(`INSERT INTO public."TransactionSchedule" ("idSchedule", "amount","description","idPromo","idUser") VALUES
@@ -114,4 +132,5 @@ module.exports = {
   getTransactions,
   addTransaction,
   updateTransaction,
+  getMemberBySchedule
 }
