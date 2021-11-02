@@ -19,8 +19,8 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./postgresdata:/var/lib/postgresql/data
-      - ./src/migrations/dbinit.sql:/docker-entrypoint-initdb.d/dbinit.sql
+      - .db-data:/var/lib/postgresql/data
+      - ./dbscripts/postgres:/docker-entrypoint-initdb.d
     restart: always
     environment:
       POSTGRES_USER: postgres
