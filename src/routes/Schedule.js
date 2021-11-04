@@ -6,5 +6,5 @@ module.exports = function(app) {
   app.get('/schedules', [auth.verifyToken], getSchedules);
   app.get('/schedule/:idSchedule', [auth.verifyToken], getSchedule);
   app.put('/schedule/:idSchedule',[auth.verifyToken], updateSchedule);
-  app.post('/schedule',[auth.verifyToken, addSchedule])
+  app.post('/schedule',[auth.verifyToken], addSchedule)
 };

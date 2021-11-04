@@ -5,5 +5,5 @@ module.exports = function(app) {
   app.get('/promos', [auth.verifyToken], getPromos);
   app.get('/promo/:idPromo', [auth.verifyToken], getPromo);
   app.put('/promo/:idPromo',[auth.verifyToken], updatePromo);
-  app.post('/Promo',[auth.verifyToken, addPromo])
+  app.post('/Promo',[auth.verifyToken], addPromo)
 };

@@ -22,7 +22,9 @@ require('./routes/Promo')(router);//diskon
 require('./routes/Notification')(router);//notifikasi
 require('./routes/Schedule')(router)//jadwal workout untuk workout planner
 require('./routes/TransactionSchedule')(router);//jadwal workout
+require('./routes/TransactionProduct')(router);
 require('./routes/Product')(router);
+require('./routes/Cart')(router);
 app.use('/api', router);
 
 const PORT = 3000;
