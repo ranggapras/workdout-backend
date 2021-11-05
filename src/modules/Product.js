@@ -44,7 +44,7 @@ const getProduct = (request, response) => {
 }
 
 const addProduct = (request, response) => {
-  const { name,description,stock,price = false } = request.body;
+  const { name,description,stock,price } = request.body;
   pool.query(`INSERT INTO public."Product" ("name", "description","stock","price") VALUES
     ('${name}', '${description}','${stock}','${price}')  RETURNING "idProduct"`, (error, results) => {
         if (error) {
@@ -64,7 +64,7 @@ const addProduct = (request, response) => {
 
 const updateProduct = (request, response) => {
   const { idProduct } = request.params;
-  const { name,description,stock,price = false } = request.body;
+  const { name,description,stock,price } = request.body;
   pool.query(`UPDATE public."Product" SET "name" = '${name}', "description" = '${description}',"stock"='${stock}',"price"='${price}'
     WHERE "idProduct" = '${idProduct}'`, (error, results) => {
       if (error) {

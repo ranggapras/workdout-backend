@@ -23,6 +23,8 @@ require('./routes/Notification')(router);//notifikasi
 require('./routes/Schedule')(router)//jadwal workout untuk workout planner
 require('./routes/TransactionSchedule')(router);//jadwal workout
 require('./routes/TransactionProduct')(router);
+require('./routes/Membership')(router);
+require('./routes/MembershipProduct')(router);
 require('./routes/Product')(router);
 require('./routes/Cart')(router);
 app.use('/api', router);
