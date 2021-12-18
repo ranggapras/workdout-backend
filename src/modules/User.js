@@ -20,6 +20,24 @@ const getUsers = (request, response) => {
   })
 }
 
+const getAdmin = (request, response) => {
+  const { idUser } = request.params;
+  pool.query(`SELECT * FROM public."User" WHERE public."User"."idUser" = '${idUser}'`, (error, results) => {
+    if (error) {
+      return response.status(500).send({
+        code: 500,
+        message: "Failed!"
+      });
+    }
+    const result = {
+      data: results.rows[0],
+      code: 200,
+      message: 'success'
+    }
+    return response.status(200).json(result)
+  })
+}
+
 const getUser = (request, response) => {
   const { idUser } = request.params;
   pool.query(`SELECT * FROM public."view_member" WHERE public."view_member"."idUser" = '${idUser}'`, (error, results) => {
@@ -158,7 +176,7 @@ const loginUser = (request, response) => {
           });
         }
 
-        var token = jwt.sign({ id: results.rows[0].idUser }, BASIC_TOKEN, {
+        var token = jwt.sign({ id: results.rows[0].idUser, role: results.rows[0].role }, BASIC_TOKEN, {
           expiresIn: 86400
         });
 
@@ -179,6 +197,7 @@ const loginUser = (request, response) => {
 module.exports = {
   getUsers,
   getUser,
+  getAdmin,
   registerUser,
   updateUser,
   updatePassword,

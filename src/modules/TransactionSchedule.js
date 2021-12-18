@@ -81,6 +81,7 @@ const getMemberBySchedule = (request, response) => {
       }
     const result = {
       data: resultsSchedule.rows,
+      meta: { totalData: 2, page: 1 },
       code: 200,
       message: 'success'
     }
