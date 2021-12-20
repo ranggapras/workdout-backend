@@ -10,6 +10,7 @@ const getWorkouts = (request, response) => {
     }
     const result = {
       data: results.rows,
+      meta: { totalData: 2, page: 1 },
       code: 200,
       message: 'success'
     }
@@ -74,9 +75,28 @@ const updateWorkout = (request, response) => {
   })
 }
 
+const deleteWorkout = (request, response) => {
+  const { idWorkout } = request.params;
+  pool.query(`DELETE FROM public."Workout" WHERE "idWorkout"='${idWorkout}'`, (error, results) => {
+    if (error) {
+      return response.status(500).send({
+        code: 500,
+        message: "Failed!"
+      });
+    }
+      const result = {
+        data: {},
+        code: 200,
+        message: 'success'
+      }
+      return response.status(200).json(result)
+  })
+}
+
 module.exports = {
   getWorkout,
   getWorkouts,
   addWorkout,
+  deleteWorkout,
   updateWorkout,
 }

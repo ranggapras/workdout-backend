@@ -18,7 +18,7 @@ const getCarts = (request, response) => {
   })
 }
 
-const addCart = (request, response) => {
+const addCart = (request, responfse) => {
   const { idUser,amountItems,idProduct = false } = request.body;
   pool.query(`INSERT INTO public."Cart" ("idUser", "amountItems","idProduct") VALUES
     ('${idUser}', '${amountItems}','${idProduct}')  RETURNING "IdCart"`, (error, results) => {

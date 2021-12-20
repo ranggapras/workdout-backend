@@ -2,18 +2,39 @@ const pool = require('../configs/dbconnect');
 
 const getProducts = (request, response) => {
   pool.query('SELECT * FROM public."Product"', (error, results) => {
+    pool.query('SELECT * FROM public."Product" ORDER BY "views" DESC', (error, resultsLaris) => {
+      pool.query('SELECT * FROM public."Product" ORDER BY "price" DESC', (error, resultsMahal) => {
+        pool.query('SELECT * FROM public."Product" ORDER BY "price" ASC', (error, resultsMurah) => {
+          if (error) {
+            return response.status(500).send({
+              code: 500,
+              message: "Failed!"
+            });
+          }
+          const result = {
+            data: results.rows,
+            dataTerlaris: resultsLaris.rows,
+            dataMahal: resultsMahal.rows,
+            dataMurah: resultsMurah.rows,
+            code: 200,
+            message: 'success'
+          }
+          return response.status(200).json(result)
+        })
+      })
+      if (error) {
+        return response.status(500).send({
+          code: 500,
+          message: "Failed!"
+        });
+      }
+    })
     if (error) {
       return response.status(500).send({
         code: 500,
         message: "Failed!"
       });
     }
-    const result = {
-      data: results.rows,
-      code: 200,
-      message: 'success'
-    }
-    return response.status(200).json(result)
   })
 }
 
