@@ -1,8 +1,10 @@
 const auth = require('../configs/auth');
 
-const { getUsers, registerUser, loginUser, getUser, updateUser, updatePassword, getAdmin } = require('../modules/User')
+const { getUsers, registerUser, loginUser, getUser, updateUser, updatePassword, getAdmin, getDashboard, sendEmail } = require('../modules/User')
 
 module.exports = function(app) {
+  app.post('/send-email/:email', [auth.basicValidation], sendEmail);
+  app.get('/dashboard', [auth.verifyToken], getDashboard);
   app.get('/users', [auth.verifyToken], getUsers);
   app.get('/user/:idUser', [auth.verifyToken], getUser);
   app.get('/admin/:idUser', [auth.verifyToken], getAdmin);

@@ -2,6 +2,9 @@ const pool = require('../configs/dbconnect');
 const { BASIC_TOKEN } = require('../configs/auth');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const hbs = require('nodemailer-express-handlebars')
+const nodemailer = require('nodemailer');
+const path = require('path')
 
 const getUsers = (request, response) => {
   pool.query('SELECT * FROM public."view_member"', (error, results) => {
@@ -194,6 +197,119 @@ const loginUser = (request, response) => {
   })
 }
 
+const sendEmail = (request, response) => {
+  const { email } = request.params;
+
+console.log();
+  var transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+          user: 'wokrdoutgym@gmail.com',
+          pass: 'workdout123'
+      }
+  });
+
+  const handlebarOptions = {
+    viewEngine: {
+        partialsDir: path.resolve('./src/html/'),
+        defaultLayout: false,
+    },
+    viewPath: path.resolve('./src/html/'),
+  };
+
+  transporter.use('compile', hbs(handlebarOptions));
+
+  var mailOptions = {
+      from: 'wokrdoutgym@gmail.com',
+      to: email,
+      subject: 'Lakukan pembaruan kata sandi Anda.',
+      template: 'email',
+      context:{
+        email: email
+      },
+      attachments: [{
+        filename: 'logo.png',
+        path: __dirname + '/images/logo.png',
+        cid: 'logo'
+      },{
+      filename: 'body_background_2.png',
+      path: __dirname + '/images/body_background_2.png',
+      cid: 'back'
+      },{
+        filename: 'bottom_img.png',
+        path: __dirname + '/images/bottom_img.png',
+        cid: 'bottom'
+      },{
+      filename: 'animated_header.gif',
+      path: __dirname + '/images/animated_header.gif',
+      cid: 'animate'
+      }]
+  };
+
+  transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+          return response.status(500).send({
+            code: 500,
+            message: `Failed! : ${err}`
+          });
+      };
+      console.log(info.response)
+      const result = {
+        data: [],
+        code: 200,
+        message: 'success'
+      }
+      return response.status(200).json(result)
+  });
+}
+
+const getDashboard = (request, response) => {
+  const { idUser } = request.params;
+  pool.query(`SELECT count(*) FROM public."Trainer"`, (error, results) => {
+    if (error) {
+      return response.status(500).send({
+        code: 500,
+        message: "Failed!"
+      });
+    }
+    pool.query(`SELECT count(*) FROM public."Product"`, (error, results1) => {
+      if (error) {
+        return response.status(500).send({
+          code: 500,
+          message: "Failed!"
+        });
+      }
+      pool.query(`SELECT count(*) FROM public."TransactionProduct" WHERE "status" = '1'`, (error, results2) => {
+        if (error) {
+          return response.status(500).send({
+            code: 500,
+            message: "Failed!"
+          });
+        }
+        pool.query(`SELECT count(*) FROM public."TransactionProduct" WHERE "status" != '1'`, (error, results3) => {
+          if (error) {
+            return response.status(500).send({
+              code: 500,
+              message: "Failed!"
+            });
+          }
+          const result = {
+            data: {
+              trainer: results.rows[0].count,
+              product: results1.rows[0].count,
+              sell: results2.rows[0].count,
+              checkout: results3.rows[0].count,
+            },
+            code: 200,
+            message: 'success'
+          }
+          return response.status(200).json(result)
+        })
+      })
+    })
+  })
+}
+
 module.exports = {
   getUsers,
   getUser,
@@ -202,4 +318,6 @@ module.exports = {
   updateUser,
   updatePassword,
   loginUser,
+  getDashboard,
+  sendEmail
 }
