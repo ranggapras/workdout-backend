@@ -17,6 +17,24 @@ const getSchedules = (request, response) => {
   })
 }
 
+const getSchedulesByWorkout = (request, response) => {
+  const { idWorkout } = request.params;
+  pool.query(`SELECT * FROM public."Schedule" WHERE "idWorkout" = '${idWorkout}'`, (error, results) => {
+    if (error) {
+      return response.status(500).send({
+        code: 500,
+        message: "Failed!"
+      });
+    }
+    const result = {
+      data: results.rows,
+      code: 200,
+      message: 'success'
+    }
+    return response.status(200).json(result)
+  })
+}
+
 const getSchedule = (request, response) => {
   const { idSchedule } = request.params;
   pool.query(`SELECT * FROM public."Schedule" WHERE "idSchedule" = '${idSchedule}'`, (error, resultsSchedule) => {
@@ -93,4 +111,5 @@ module.exports = {
   getSchedule,
   addSchedule,
   updateSchedule,
+  getSchedulesByWorkout
 }

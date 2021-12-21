@@ -66,9 +66,29 @@ const updateTrainer = (request, response) => {
   })
 }
 
+const deleteTrainer = (request, response) => {
+  const { idTrainer } = request.params;
+  pool.query(`DELETE FROM public."Trainer" WHERE "idTrainer"='${idTrainer}'`, (error, results) => {
+    if (error) {
+      return response.status(500).send({
+        code: 500,
+        message: error,
+      });
+    }
+      const result = {
+        data: {},
+        code: 200,
+        message: 'success'
+      }
+      return response.status(200).json(result)
+  })
+}
+
+
 module.exports = {
   getTrainer,
   getTrainers,
   addTrainer,
   updateTrainer,
+  deleteTrainer
 }
