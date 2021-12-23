@@ -68,7 +68,7 @@ const registerUser = (request, response) => {
       if (error) {
         return response.status(500).send({
           code: 500,
-          message: error
+          message: 'Failed!'
         });
       }
       const result = {
@@ -96,7 +96,7 @@ const updateUser = (request, response) => {
         console.log(error);
         return response.status(500).send({
           code: 500,
-          message: "Failed!"
+          message: error
         });
       }
       const result = {
