@@ -10,6 +10,7 @@ const getMemberships = (request, response) => {
     }
     const result = {
       data: results.rows,
+      meta: { totalData: 10, page: 1},
       code: 200,
       message: 'success'
     }

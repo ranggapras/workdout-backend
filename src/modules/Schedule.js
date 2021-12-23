@@ -37,32 +37,19 @@ const getSchedulesByWorkout = (request, response) => {
 
 const getSchedule = (request, response) => {
   const { idSchedule } = request.params;
-  pool.query(`SELECT * FROM public."Schedule" WHERE "idSchedule" = '${idSchedule}'`, (error, resultsSchedule) => {
-    pool.query(`SELECT * FROM public."Workout" WHERE "idWorkout"
-    IN (${resultsSchedule.rows[0].idWorkout.map(d => `'${d}'`).join(',')})`, (error, resultsWorkout) => {
-      if (error) {
-        console.log(error);
-        return response.status(500).send({
-          code: 500,
-          message: "Failed W!"
-        });
-      }
-      const result = {
-        data: {
-          ...resultsSchedule.rows[0],
-          workout: resultsWorkout.rows,
-        },
-        code: 201,
-        message: 'success'
-      }
-      return response.status(200).json(result)
-    })
+  pool.query(`SELECT * FROM public."Schedule" WHERE "idSchedule" = '${idSchedule}'`, (error, results) => {
     if (error) {
       return response.status(500).send({
         code: 500,
         message: "Failed!"
       });
     }
+    const result = {
+      data: results.rows[0],
+      code: 201,
+      message: 'success'
+    }
+    return response.status(200).json(result)
   })
 }
 
