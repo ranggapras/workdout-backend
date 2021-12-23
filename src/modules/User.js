@@ -91,7 +91,7 @@ const updateUser = (request, response) => {
   const { idUser } = request.params;
   const { nameUser, photo, email, phoneNumber, address } = request.body;
   pool.query(`UPDATE public."User" SET "nameUser" = '${nameUser}', "photo" = '${photo}', "phoneNumber" = '${phoneNumber}',
-     "email" = '${email}', "address" = '${address}' WHERE "idUser" = '${idUser}'`, (error, results) => {
+     "email" = '${email}' WHERE "idUser" = '${idUser}'`, (error, results) => {
       if (error) {
         console.log(error);
         return response.status(500).send({
@@ -99,12 +99,21 @@ const updateUser = (request, response) => {
           message: error
         });
       }
-      const result = {
-        data: {},
-        code: 200,
-        message: 'success'
-      }
-      return response.status(200).json(result)
+      pool.query(`UPDATE public."Customer" SET "address" = '${address}' WHERE "idUser" = '${idUser}'`, (error, results) => {
+       if (error) {
+         console.log(error);
+         return response.status(500).send({
+           code: 500,
+           message: error
+         });
+       }
+       const result = {
+         data: {},
+         code: 200,
+         message: 'success'
+       }
+       return response.status(200).json(result)
+   })
   })
 }
 
