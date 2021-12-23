@@ -72,7 +72,7 @@ const deleteTrainer = (request, response) => {
     if (error) {
       return response.status(500).send({
         code: 500,
-        message: error,
+        message: 'Failed!',
       });
     }
       const result = {
