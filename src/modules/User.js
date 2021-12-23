@@ -89,9 +89,9 @@ const registerUser = (request, response) => {
 
 const updateUser = (request, response) => {
   const { idUser } = request.params;
-  const { nameUser, photo, email, phoneNumber } = request.body;
+  const { nameUser, photo, email, phoneNumber, address } = request.body;
   pool.query(`UPDATE public."User" SET "nameUser" = '${nameUser}', "photo" = '${photo}', "phoneNumber" = '${phoneNumber}',
-     "email" = '${email}' WHERE "idUser" = '${idUser}'`, (error, results) => {
+     "email" = '${email}', "address" = '${address}' WHERE "idUser" = '${idUser}'`, (error, results) => {
       if (error) {
         console.log(error);
         return response.status(500).send({
@@ -101,7 +101,7 @@ const updateUser = (request, response) => {
       }
       const result = {
         data: {},
-        code: 201,
+        code: 200,
         message: 'success'
       }
       return response.status(200).json(result)

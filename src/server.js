@@ -27,6 +27,7 @@ require('./routes/Membership')(router);
 require('./routes/MembershipProduct')(router);
 require('./routes/Product')(router);
 require('./routes/Cart')(router);
+require('./routes/Payment')(router);
 app.use('/api', router);
 
 const PORT = 3000;

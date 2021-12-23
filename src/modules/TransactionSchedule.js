@@ -110,7 +110,7 @@ const addTransaction = (request, response) => {
 }
 
 const updateTransaction = (request, response) => {
-  const { idTransaction } = request.params;
+  const { idTransaction, name } = request.params;
   const { status } = request.body;
   pool.query(`UPDATE public."TransactionSchedule" SET "status" = '${status}' WHERE "idTransaction"='${idTransaction}'`, (error, results) => {
     if (error) {
@@ -119,6 +119,19 @@ const updateTransaction = (request, response) => {
         message: "Failed!"
       });
     }
+    const orderId = Date.now();
+    const parameter = {
+      "transaction_details": {
+          "order_id": `WRK-${orderId}`,
+          "gross_amount": totalAmount
+      },
+      "credit_card":{
+          "secure" : true
+      },
+      "customer_details": {
+          "first_name": name,
+      }
+  };
       const result = {
         data: {},
         code: 201,

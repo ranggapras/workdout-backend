@@ -50,7 +50,7 @@ const getTransactionProduct = (request, response) => {
 }
 
 const addTransactionProduct = (request, response) => {
-  const { idCart, idPromo = '', totalAmount, nama } = request.body;
+  const { idCart, idPromo = '', totalAmount, name } = request.body;
   pool.query(`INSERT INTO public."TransactionProduct" ("idCart", "idPromo", "totalAmount") VALUES
     ('{${idCart.map(d => `"${d}"`).join(',')}}', '${idPromo}', '${totalAmount}')  RETURNING "idTransactionProduct"`, (error, results) => {
       pool.query(`INSERT INTO public."Payment" ("idTransaction", "idPromo", "totalAmount") VALUES
