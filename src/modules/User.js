@@ -188,7 +188,7 @@ const loginUser = (request, response) => {
           });
         }
 
-        var token = jwt.sign({ id: results.rows[0].idUser, role: results.rows[0].role }, BASIC_TOKEN, {
+        var token = jwt.sign({ id: results.rows[0].idUser, role: results.rows[0].role, nameUser:results.rows[0].nameUser }, BASIC_TOKEN, {
           expiresIn: 86400
         });
 
