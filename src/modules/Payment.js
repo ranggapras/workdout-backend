@@ -11,6 +11,25 @@ const getPayments = (request, response) => {
     }
     const result = {
       data: results.rows,
+      meta: { totalData: 10, page: 1},
+      code: 200,
+      message: 'success'
+    }
+    return response.status(200).json(result)
+  })
+}
+
+const getIsi = (request, response) => {
+  pool.query('SELECT * FROM public."Payment" WHERE "type" = 4', (error, results) => {
+    if (error) {
+      return response.status(500).send({
+        code: 500,
+        message: "Failed!"
+      });
+    }
+    const result = {
+      data: results.rows,
+      meta: { totalData: 10, page: 1},
       code: 200,
       message: 'success'
     }
@@ -45,43 +64,26 @@ const getMidtransNotif = (request, response) => {
  
         console.log(`Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}`);
 
-        if (transactionStatus == 'capture'){
-            if (fraudStatus == 'challenge'){
-                // TODO set transaction status on your database to 'challenge'
-                // and response with 200 OK
-            } else if (fraudStatus == 'accept'){
-                // TODO set transaction status on your database to 'success'
-                // and response with 200 OK
+        pool.query(`UPDATE public."Payment" SET "status" = 1 WHERE "orderId"='${orderId}'`, (error, results) => {
+          if (error) {
+            return response.status(500).send({
+              code: 500,
+              message: "Failed!"
+            });
+          }
+            const result = {
+              data: {},
+              code: 200,
+              message: 'success'
             }
-        } else if (transactionStatus == 'settlement'){
-          pool.query(`UPDATE public."Payment" SET "status" = 1 WHERE "orderId"='${orderId}'`, (error, results) => {
-            if (error) {
-              return response.status(500).send({
-                code: 500,
-                message: "Failed!"
-              });
-            }
-              const result = {
-                data: {},
-                code: 200,
-                message: 'success'
-              }
-              return response.status(200).json(result)
-          })
-        } else if (transactionStatus == 'cancel' ||
-          transactionStatus == 'deny' ||
-          transactionStatus == 'expire'){
-          // TODO set transaction status on your database to 'failure'
-          // and response with 200 OK
-        } else if (transactionStatus == 'pending'){
-          // TODO set transaction status on your database to 'pending' / waiting payment
-          // and response with 200 OK
-        }
+            return response.status(200).json(result)
+        })
     });
 }
 
 module.exports = {
   getPayments,
+  getIsi,
   getPayment,
   getMidtransNotif
 }
