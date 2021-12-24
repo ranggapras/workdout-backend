@@ -19,13 +19,13 @@ const getCarts = (request, response) => {
 }
 
 const addCart = (request, response) => {
-  const { idUser,amountItems,idProduct = false } = request.body;
+  const { idUser,amountItems,idProduct } = request.body;
   pool.query(`INSERT INTO public."Cart" ("idUser", "amountItems","idProduct") VALUES
     ('${idUser}', '${amountItems}','${idProduct}')  RETURNING "IdCart"`, (error, results) => {
         if (error) {
           return response.status(500).send({
             code: 500,
-            message: "Failed!"
+            message: error
           });
         }
       const result = {
@@ -39,7 +39,7 @@ const addCart = (request, response) => {
 
 const updateItem = (request, response) => {
   const { idCart } = request.params;
-  const { amountItems = false } = request.body;
+  const { amountItems = 0 } = request.body;
   pool.query(`UPDATE public."Cart" SET "amountItems" = '${amountItems}' WHERE "idCart" = '${idCart}'`, (error, results) => {
       if (error) {
           console.log(error);

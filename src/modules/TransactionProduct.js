@@ -53,8 +53,9 @@ const addTransactionProduct = (request, response) => {
   const { idCart, idPromo = '', totalAmount, name } = request.body;
   pool.query(`INSERT INTO public."TransactionProduct" ("idCart", "idPromo", "totalAmount") VALUES
     ('{${idCart.map(d => `"${d}"`).join(',')}}', '${idPromo}', '${totalAmount}')  RETURNING "idTransactionProduct"`, (error, results) => {
-      pool.query(`INSERT INTO public."Payment" ("idTransaction", "idPromo", "totalAmount") VALUES
-        ('{${idCart.map(d => `"${d}"`).join(',')}}', '${idPromo}', '${totalAmount}')  RETURNING "idTransactionProduct"`, (error, results) => {
+      const orderId = `PROD-${Date.now()}`;
+      pool.query(`INSERT INTO public."Payment" ("idTransaction", "idMidtrans", "amount", "orderId") VALUES
+        ('${results.rows[0].idTransactionProduct}', '','${totalAmount}', '${orderId}')  RETURNING "idPayment"`, (error, results) => {
           if (error) {
             console.log(error);
             return response.status(500).send({
@@ -62,17 +63,16 @@ const addTransactionProduct = (request, response) => {
               message: "Failed!"
             });
           }
-          const orderId = Date.now();
           const parameter = {
             "transaction_details": {
-                "order_id": `PROD-${orderId}`,
+                "order_id": `${orderId}`,
                 "gross_amount": totalAmount
             },
             "credit_card":{
                 "secure" : true
             },
             "customer_details": {
-                "first_name": nama,
+                "first_name": name,
             }
         };
         snap.createTransaction(parameter)
@@ -118,9 +118,26 @@ const updateTransaction = (request, response) => {
   })
 }
 
+const getMidtransNotif = (request, response) => {
+  if (error) {
+    console.log(error);
+    return response.status(500).send({
+      code: 500,
+      message: "Failed!"
+    });
+  }
+  const result = {
+    data: request.body,
+    code: 201,
+    message: 'success'
+  }
+  return response.status(200).json(result)
+}
+
 module.exports = {
   getTransactionProducts,
   getTransactionProduct,
   addTransactionProduct,
   updateTransaction,
+  getMidtransNotif
 }
