@@ -118,26 +118,9 @@ const updateTransaction = (request, response) => {
   })
 }
 
-const getMidtransNotif = (request, response) => {
-  if (error) {
-    console.log(error);
-    return response.status(500).send({
-      code: 500,
-      message: "Failed!"
-    });
-  }
-  const result = {
-    data: request.body,
-    code: 201,
-    message: 'success'
-  }
-  return response.status(200).json(result)
-}
-
 module.exports = {
   getTransactionProducts,
   getTransactionProduct,
   addTransactionProduct,
   updateTransaction,
-  getMidtransNotif
 }
