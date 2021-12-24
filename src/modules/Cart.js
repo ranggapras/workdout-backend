@@ -21,7 +21,7 @@ const getCarts = (request, response) => {
 const addCart = (request, response) => {
   const { idUser,amountItems,idProduct } = request.body;
   pool.query(`INSERT INTO public."Cart" ("idUser", "amountItems","idProduct") VALUES
-    ('${idUser}', '${amountItems}','${idProduct}')`, (error, results) => {
+    ('${idUser}', '${amountItems}','${idProduct}') RETURNING "Card"."IdCart"`, (error, results) => {
         if (error) {
           return response.status(500).send({
             code: 500,
